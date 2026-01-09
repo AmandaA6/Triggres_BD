@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h2>Login</h2>
+        <form method="POST">
+            <label>Email:</label><input type="email" name="email" required><br>
+            <label>Senha:</label><input type="password" name="senha" required><br>
+            <button type="submit">Entrar</button>
+        </form>
+    <p>Ainda não tem conta? <a href="/cadastro">Cadastre-se</a></p>
+
+{% endblock %}

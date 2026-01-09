@@ -1,0 +1,32 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Usuários</h1>
+
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th>Data de Inscrição</th>
+            <th>Multa Atual</th>
+            <th>Ações</th>
+        </tr>
+        {% for usuario in dados %}
+        <tr>
+            <td>{{ usuario[0] }}</td>
+            <td>{{ usuario[1] }}</td>
+            <td>{{ usuario[2] }}</td>
+            <td>{{ usuario[3] }}</td>
+            <td>{{ usuario[4] }}</td>
+            <td>R$ {{ "%.2f"|format(usuario[5]) }}</td>
+            <td>
+                <a href="{{ url_for('editar_usuario', id=usuario[0]) }}">Editar</a> |
+                <a href="{{ url_for('excluir_usuario', id=usuario[0]) }}">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+{% endblock %}

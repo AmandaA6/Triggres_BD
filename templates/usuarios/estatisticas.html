@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h2>Minhas Estatísticas</h2>
+
+<div class="card emprestimo-info">
+    <h4>Situação Financeira Detalhada</h4>
+    <div class="row">
+        <div class="col-6">
+            <p><strong>Multa já aplicada:</strong></p>
+            <p class="big-number">R$ {{ "%.2f"|format(estatisticas.multa_atual) }}</p>
+            <small>Valor já cobrado na sua conta</small>
+        </div>
+        <div class="col-6">
+            <p><strong>Multa pendente:</strong></p>
+            <p class="big-number status-atrasado">R$ {{ "%.2f"|format(estatisticas.multa_pendente) }}</p>
+            <small>A ser cobrada ao devolver</small>
+        </div>
+    </div>
+    <div class="card-header">
+        <p><strong>Total devido:</strong> 
+           <span class="big-number">R$ {{ "%.2f"|format(estatisticas.multa_total) }}</span>
+        </p>
+    </div>
+</div>
+
+{% if emprestimos_atrasados %}
+<div class="card">
+    <h4>Empréstimos Atrasados Atuais</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Livro</th>
+                <th>Data Empréstimo</th>
+                <th>Data Devolução</th>
+                <th>Dias Atraso</th>
+                <th>Multa Devida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emp in emprestimos_atrasados %}
+            <tr>
+                <td>{{ emp.Titulo }}</td>
+                <td>{{ emp.Data_emprestimo }}</td>
+                <td>{{ emp.Data_devolucao_prevista }}</td>
+                <td class="status-atrasado">{{ emp.dias_atraso }} dias</td>
+                <td class="status-atrasado">R$ {{ "%.2f"|format(emp.multa_devida) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4"><strong>Total pendente:</strong></td>
+                <td class="status-atrasado"><strong>R$ {{ "%.2f"|format(estatisticas.multa_pendente) }}</strong></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
