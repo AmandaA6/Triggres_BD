@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h2>Devolver Empréstimo</h2>
+
+<h3>Informações do Empréstimo</h3>
+<p><strong>Usuário:</strong> {{ emprestimo.nome_usuario }}</p>
+<p><strong>Livro:</strong> {{ emprestimo.Titulo }}</p>
+<p><strong>Data do Empréstimo:</strong> {{ emprestimo.Data_emprestimo }}</p>
+<p><strong>Devolução Prevista:</strong> {{ emprestimo.Data_devolucao_prevista }}</p>
+
+{% if emprestimo.Status_emprestimo == 'atrasado' %}
+    {% set dias_atraso = (today - emprestimo.Data_devolucao_prevista).days %}
+    {% set multa = dias_atraso * 2.00 %}
+    <div>
+        <h4>EMPRÉSTIMO ATRASADO</h4>
+        <p><strong>Dias em atraso:</strong> {{ dias_atraso }} dias</p>
+        <p><strong>Multa a ser paga:</strong> R$ {{ "%.2f"|format(multa) }}</p>
+        <p><strong>Valor da multa:</strong> R$ 2,00 por dia de atraso</p>
+    </div>
+{% else %}
+    <div>
+        <p>Empréstimo dentro do prazo</p>
+    </div>
+{% endif %}
+
+<form method="POST">
+    <div>
+        <label for="data_devolucao_real"><strong>Data de Devolução Real:</strong></label><br>
+        <input type="date" id="data_devolucao_real" name="data_devolucao_real" value="{{ today }}" required>
+        <br><small>Se a data for posterior à data prevista, será cobrada multa adicional</small>
+    </div>
+    
+    <div>
+        <h4>Informações sobre Multas:</h4>
+        <ul>
+            <li>Multa por atraso: <strong>R$ 2,00 por dia</strong></li>
+            <li>Multa será calculada automaticamente na devolução</li>
+            <li>O valor será adicionado à multa atual do usuário</li>
+        </ul>
+    </div>
+    
+    <br>
+    <button type="submit">
+        Registrar Devolução
+    </button>
+    <a href="{{ url_for('listar_emprestimos') }}">Cancelar</a>
+</form>
+{% endblock %}
