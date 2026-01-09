@@ -1,0 +1,95 @@
+{% extends "index.html" %}
+
+{% block content %}
+<h2>Logs de Auditoria do Sistema</h2>
+
+<form method="POST" action="{{ url_for('filtrar_auditoria') }}" class="filter-form">
+    <div class="row">
+        <div class="col">
+            <label>Data Início:</label>
+            <input type="date" name="data_inicio">
+        </div>
+        <div class="col">
+            <label>Data Fim:</label>
+            <input type="date" name="data_fim">
+        </div>
+        <div class="col">
+            <label>Operação:</label>
+            <select name="operacao">
+                <option value="">Todas</option>
+                <option value="INSERT">Inserções</option>
+                <option value="UPDATE">Atualizações</option>
+                <option value="DELETE">Exclusões</option>
+                <option value="DEVOLUÇÃO">Devoluções</option>
+                <option value="PAGAMENTO_MULTA">Pagamentos</option>
+            </select>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn">Filtrar</button>
+            <a href="{{ url_for('auditoria') }}" class="btn">Limpar</a>
+        </div>
+    </div>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Data/Hora</th>
+            <th>Tabela</th>
+            <th>Operação</th>
+            <th>ID Registro</th>
+            <th>Dados Antigos</th>
+            <th>Dados Novos</th>
+            <th>Usuário</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in logs %}
+        <tr>
+            <td>{{ log.id_log }}</td>
+            <td>{{ log.data_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>{{ log.tabela_afetada }}</td>
+            <td>
+                <span class="badge 
+                    {% if log.operacao == 'INSERT' %}badge-success
+                    {% elif log.operacao == 'UPDATE' %}badge-warning
+                    {% elif log.operacao == 'DELETE' %}badge-danger
+                    {% else %}badge-info{% endif %}">
+                    {{ log.operacao }}
+                </span>
+            </td>
+            <td>{{ log.id_registro }}</td>
+            <td>
+                {% if log.dados_antigos %}
+                <button class="btn-sm" onclick="showJSON('antigos-{{ log.id_log }}')">
+                    Ver JSON
+                </button>
+                <div id="antigos-{{ log.id_log }}" style="display:none;">
+                    <pre>{{ log.dados_antigos }}</pre>
+                </div>
+                {% else %} - {% endif %}
+            </td>
+            <td>
+                {% if log.dados_novos %}
+                <button class="btn-sm" onclick="showJSON('novos-{{ log.id_log }}')">
+                    Ver JSON
+                </button>
+                <div id="novos-{{ log.id_log }}" style="display:none;">
+                    <pre>{{ log.dados_novos }}</pre>
+                </div>
+                {% else %} - {% endif %}
+            </td>
+            <td>{{ log.usuario_executor }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+function showJSON(id) {
+    const element = document.getElementById(id);
+    element.style.display = element.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+{% endblock %}
