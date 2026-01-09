@@ -1,0 +1,9 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Excluir Editora</h2>
+    <p>Tem certeza que deseja excluir a editora: <strong>{{ dado.Nome_editora }}</strong>?</p>
+    <form action="{{ url_for('excluir_editora', id=dado.ID_editora) }}" method="POST">
+        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        <a href="{{ url_for('listar_editora') }}" class="">Cancelar</a

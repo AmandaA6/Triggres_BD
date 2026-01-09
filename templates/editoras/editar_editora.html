@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Editar Editora</h1>
+
+    <form action="" method="post">
+        <label>Nome:</label><br>
+        <input type="text" name="nome" value="{{ editora.Nome_editora }}" required><br><br>
+
+        <label>Endereço:</label><br>
+        <input type="text" name="endereco" value="{{ editora.Endereco_editora }}"><br><br>
+
+        <button type="submit">Salvar Alterações</button>
+    </form>
+
+    <br>
+    <a href="{{ url_for('listar_editora') }}">Voltar para a lista</a>
+
+
+{% endblock %}
