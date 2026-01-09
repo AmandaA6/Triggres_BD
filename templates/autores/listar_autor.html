@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+
+{% block content %}
+    <h1>Autores</h1>
+
+    <a href="{{ url_for('cadastrar_autor') }}">Cadastrar Novo Autor</a>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Nacionalidade</th>
+                <th>Data de Nascimento</th>
+                <th>Biografia</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for autor in autores %}
+            <tr>
+                <td>{{ autor.ID_autor }}</td>
+                <td>{{ autor.Nome_autor }}</td>
+                <td>{{ autor.Nacionalidade or '-' }}</td>
+                <td>{{ autor.Data_nascimento or '-' }}</td>
+                <td>{{ autor.Biografia or '-' }}</td>
+                <td>
+                    <a href="{{ url_for('editar_autor', id=autor.ID_autor) }}">Editar</a> |
+                    <a href="{{ url_for('excluir_autor', id=autor.ID_autor) }}" onclick="return confirm('Deseja realmente excluir?');">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

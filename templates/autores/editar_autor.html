@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+    <h2>Editar Autor</h2>
+
+    <form method="POST">
+    <label>Nome:</label><br>
+    <input type="text" name="nome" value="{{ autor.Nome_autor }}" required><br>
+
+    <label>Nacionalidade:</label><br>
+    <input type="text" name="nacionalidade" value="{{ autor.Nacionalidade }}"><br>
+
+    <label>Data de nascimento:</label><br>
+    <input type="date" name="nascimento" value="{{ autor.Data_nascimento }}"><br>
+
+    <label>Biografia:</label><br>
+    <textarea name="biografia">{{ autor.Biografia }}</textarea><br>
+
+    <button type="submit">Salvar</button>
+    </form>
+
+{% endblock %}

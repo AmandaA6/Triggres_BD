@@ -1,0 +1,12 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Excluir Autor</h2>
+    <p>Tem certeza que deseja excluir o autor: <strong>{{ dado.Nome_autor }}</strong>?</p>
+    <form action="{{ url_for('excluir_autor', id=dado.ID_autor) }}" method="POST">
+        <button type="submit" class="btn btn-danger">Sim, excluir</button>
+        <a href="{{ url_for('listar_autores') }}" class="">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
