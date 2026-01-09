@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 
 user = "root"
-password = "20071607"
+password = ""
 host = "localhost"
 port = 3306
 database = "db_atividade17"
@@ -78,3 +78,4 @@ with engine.connect() as conn:
     """))
 
     print("Tabelas criadas ou já existiam.")
+
