@@ -1,0 +1,69 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Criar Livro</h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="titulo">Título:</label>
+            <input type="text" id="titulo" name="titulo" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="autor_id">Autor:</label>
+            <select id="autor_id" name="autor_id" required>
+                <option value="">Selecione um autor</option>
+                {% for autor in autores %}
+                    <option value="{{ autor.ID_autor }}">{{ autor.Nome_autor }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="isbn">ISBN:</label>
+            <input type="text" id="isbn" name="isbn" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="ano_publicacao">Ano de Publicação:</label>
+            <input type="number" id="ano_publicacao" name="ano_publicacao" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="genero_id">Gênero:</label>
+            <select id="genero_id" name="genero_id" required>
+                <option value="">Selecione um gênero</option>
+                {% for genero in generos %}
+                    <option value="{{ genero.id_genero }}">{{ genero.nome_genero }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="editora_id">Editora:</label>
+            <select id="editora_id" name="editora_id" required>
+                <option value="">Selecione uma editora</option>
+                {% for editora in editoras %}
+                    <option value="{{ editora.ID_editora }}">{{ editora.Nome_editora }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="quantidade">Quantidade Disponível:</label>
+            <input type="number" id="quantidade" name="quantidade" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="resumo">Resumo:</label>
+            <textarea id="resumo" name="resumo" rows="4"></textarea>
+        </div>
+        
+        <button type="submit" class="btn">Criar Livro</button>
+        <a href="{{ url_for('listar_livros') }}" class="btn">Cancelar</a>
+    </form>
+</div>
+
+{% endblock %}
+
