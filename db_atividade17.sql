@@ -136,3 +136,95 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
+
+-- 2. GATILHOS DE AUDITORIA (AFTER INSERT/UPDATE/DELETE)
+
+-- 2.1. Registrar cadastro de novos usuários
+DELIMITER $$
+CREATE TRIGGER log_insert_usuarios
+AFTER INSERT ON usuarios
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_auditoria (
+        tabela_afetada,
+        operacao,
+        id_registro,
+        dados_antigos,
+        dados_novos,
+        usuario_executor
+    )
+    VALUES (
+        'usuarios',
+        'INSERT',
+        NEW.id_usuario,
+        NULL,
+        CONCAT(
+            'nome=', NEW.nome_usuario,
+            ' | email=', NEW.email,
+            ' | telefone=', NEW.numero_telefone,
+            ' | data_inscricao=', NEW.data_inscricao
+        ),
+        USER()
+    );
+END$$
+DELIMITER ;
+
+-- 2.2. Registrar atualização na tabela de empréstimo
+DELIMITER $$
+CREATE TRIGGER log_update_emprestimos
+AFTER UPDATE ON Emprestimos
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_auditoria (
+        tabela_afetada,
+        operacao,
+        id_registro,
+        dados_antigos,
+        dados_novos,
+        usuario_executor
+    )
+    VALUES (
+        'Emprestimos',
+        'UPDATE',
+        OLD.ID_emprestimo,
+        CONCAT(
+            'status=', OLD.Status_emprestimo,
+            ' | data_devolucao_real=', OLD.Data_devolucao_real
+        ),
+        CONCAT(
+            'status=', NEW.Status_emprestimo,
+            ' | data_devolucao_real=', NEW.Data_devolucao_real
+        ),
+        USER()
+    );
+END$$
+DELIMITER ;
+
+-- 2.3. Registrar exclusão de livros
+DELIMITER $$
+CREATE TRIGGER log_delete_livros
+AFTER DELETE ON Livros
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_auditoria (
+        tabela_afetada,
+        operacao,
+        id_registro,
+        dados_antigos,
+        dados_novos,
+        usuario_executor
+    )
+    VALUES (
+        'Livros',
+        'DELETE',
+        OLD.ID_livro,
+        CONCAT(
+            'titulo=', OLD.Titulo,
+            ' | isbn=', OLD.ISBN,
+            ' | ano=', OLD.Ano_publicacao
+        ),
+        NULL,
+        USER()
+    );
+END$$
+DELIMITER ;
