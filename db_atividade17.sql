@@ -187,13 +187,13 @@ BEGIN
         'Emprestimos',
         'UPDATE',
         OLD.ID_emprestimo,
-        CONCAT(
-            'status=', OLD.Status_emprestimo,
-            ' | data_devolucao_real=', OLD.Data_devolucao_real
+        JSON_OBJECT(
+            'status', OLD.Status_emprestimo,
+            'data_devolucao_real', OLD.Data_devolucao_real
         ),
-        CONCAT(
-            'status=', NEW.Status_emprestimo,
-            ' | data_devolucao_real=', NEW.Data_devolucao_real
+        JSON_OBJECT(
+            'status', NEW.Status_emprestimo,
+            'data_devolucao_real', NEW.Data_devolucao_real
         ),
         USER()
     );
@@ -227,4 +227,93 @@ BEGIN
         USER()
     );
 END$$
+DELIMITER ;
+
+
+-- 3. GATILHOS ATUALIZAÇÃO AUTOMÁTICA PÓS-EVENTO (INSERT/UPDATE/DELETE)
+
+-- 3.1. Diminuir quantidade de livros após empréstimo
+DELIMITER $$
+CREATE TRIGGER diminuir_livro_emprestimo
+AFTER INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+	UPDATE Livros
+    SET Quantidade_disponivel = Quantidade_disponivel - 1
+    WHERE ID_livro = NEW.Livro_id;
+END$$
+
+DELIMITER ;
+
+-- 3.2. Aumentar quantidade do livro na devolução
+DELIMITER $$
+CREATE TRIGGER aumentar_livro_devolucao
+AFTER UPDATE ON Emprestimos
+FOR EACH ROW
+BEGIN	
+	IF OLD.Status_emprestimo <> 'devolvido'
+		AND NEW.Status_emprestimo = 'devolvido' THEN
+        
+        UPDATE Livros
+        SET Quantidade_disponivel = Quantidade_disponivel + 1
+		WHERE ID_livro = NEW.Livro_id;
+	END IF;
+END$$
+
+DELIMITER ;
+
+-- 3.3. Marcar empréstimo como atrasado automaticamente
+DELIMITER $$
+CREATE TRIGGER marcar_atraso
+BEFORE UPDATE ON Emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.Data_devolucao_real IS NULL
+       AND CURDATE() > NEW.Data_devolucao_prevista THEN
+        SET NEW.Status_emprestimo = 'atrasado';
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- 3.4. Atualizar multa do usuário automaticamente
+DELIMITER $$
+CREATE TRIGGER atualizar_multa
+AFTER UPDATE ON Emprestimos
+FOR EACH ROW
+BEGIN
+    DECLARE dias_atraso INT;
+    DECLARE valor_multa DECIMAL(10,2);
+
+    IF NEW.Data_devolucao_real IS NOT NULL
+       AND NEW.Data_devolucao_real > NEW.Data_devolucao_prevista THEN
+
+        SET dias_atraso = DATEDIFF(
+            NEW.Data_devolucao_real,
+            NEW.Data_devolucao_prevista
+        );
+        
+        SET valor_multa = dias_atraso * 0.2;
+ 
+        UPDATE Usuarios
+        SET multa_atual = IFNULL(multa_atual, 0) + valor_multa
+        WHERE id_usuario = NEW.Usuario_id;
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- 3.5. Devolver livro ao excluir empréstimo pendente
+DELIMITER $$
+CREATE TRIGGER deletar_emprestimo_pendente
+AFTER DELETE ON Emprestimos
+FOR EACH ROW
+BEGIN
+    IF OLD.Status_emprestimo = 'pendente' THEN
+        UPDATE Livros
+        SET Quantidade_disponivel = Quantidade_disponivel + 1
+        WHERE ID_livro = OLD.Livro_id;
+    END IF;
+END$$
+
 DELIMITER ;
