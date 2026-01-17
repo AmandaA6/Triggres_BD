@@ -317,3 +317,75 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- 4. Geração Automática de Valores
+
+-- 4.1. Preencher data de cadastro do usuário automaticamente
+DELIMITER $$
+
+CREATE TRIGGER data_cadastro_usuario
+BEFORE INSERT ON Usuarios
+FOR EACH ROW
+BEGIN
+    IF NEW.data_inscricao IS NULL THEN
+        SET NEW.data_inscricao = CURDATE();
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- 4.2. Definir multa inicial padrão (0.00)
+DELIMITER $$
+
+CREATE TRIGGER multa_padrao
+BEFORE INSERT ON Usuarios
+FOR EACH ROW
+BEGIN
+    IF NEW.multa_atual IS NULL THEN
+        SET NEW.multa_atual = 0.00;
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- 4.3. Preencher data do empréstimo automaticamente
+DELIMITER $$
+
+CREATE TRIGGER data_emprestimo
+BEFORE INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.Data_emprestimo IS NULL THEN
+        SET NEW.Data_emprestimo = CURDATE();
+    END IF;
+END$$
+
+DELIMITER ;
+
+--  4.4. Gerar data de devolução prevista automaticamente
+DELIMITER $$
+
+CREATE TRIGGER data_devolucao_prevista
+BEFORE INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.Data_devolucao_prevista IS NULL THEN
+        SET NEW.Data_devolucao_prevista = DATE_ADD(CURDATE(), INTERVAL 7 DAY);
+    END IF;
+END$$
+
+DELIMITER ;
+
+-- 4.5. Gerar status automático do empréstimo
+DELIMITER $$
+
+CREATE TRIGGER status_emprestimo
+BEFORE INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+    IF NEW.Status_emprestimo IS NULL THEN
+        SET NEW.Status_emprestimo = 'pendente';
+    END IF;
+END$$
+
+DELIMITER ;
