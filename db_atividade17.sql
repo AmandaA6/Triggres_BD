@@ -158,16 +158,16 @@ BEGIN
         'INSERT',
         NEW.id_usuario,
         NULL,
-        CONCAT(
-            'nome=', NEW.nome_usuario,
-            ' | email=', NEW.email,
-            ' | telefone=', NEW.numero_telefone,
-            ' | data_inscricao=', NEW.data_inscricao
+        JSON_OBJECT(
+            'nome', NEW.nome_usuario,
+            'email', NEW.email,
+            'telefone', NEW.numero_telefone,
+            'data_inscricao', NEW.data_inscricao
         ),
         USER()
     );
 END$$
-DELIMITER ;
+DELIMITER;  
 
 -- 2.2. Registrar atualização na tabela de empréstimo
 DELIMITER $$
@@ -198,10 +198,11 @@ BEGIN
         USER()
     );
 END$$
-DELIMITER ;
+DELIMITER;
 
 -- 2.3. Registrar exclusão de livros
 DELIMITER $$
+
 CREATE TRIGGER log_delete_livros
 AFTER DELETE ON Livros
 FOR EACH ROW
@@ -218,17 +219,16 @@ BEGIN
         'Livros',
         'DELETE',
         OLD.ID_livro,
-        CONCAT(
-            'titulo=', OLD.Titulo,
-            ' | isbn=', OLD.ISBN,
-            ' | ano=', OLD.Ano_publicacao
+        JSON_OBJECT(
+            'titulo', OLD.Titulo,
+            'isbn', OLD.ISBN,
+            'ano_publicacao', OLD.Ano_publicacao
         ),
         NULL,
         USER()
     );
 END$$
-DELIMITER ;
-
+DELIMITER;
 
 -- 3. GATILHOS ATUALIZAÇÃO AUTOMÁTICA PÓS-EVENTO (INSERT/UPDATE/DELETE)
 
