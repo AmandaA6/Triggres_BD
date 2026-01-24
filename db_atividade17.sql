@@ -169,7 +169,73 @@ BEGIN
 END$$
 DELIMITER;  
 
--- 2.2. Registrar atualização na tabela de empréstimo
+-- 2.2. Registrar atualização de dados dos usuários (UPDATE)
+DELIMITER $$
+CREATE TRIGGER log_update_usuarios
+AFTER UPDATE ON Usuarios
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_auditoria (
+        tabela_afetada,
+        operacao,
+        id_registro,
+        dados_antigos,
+        dados_novos,
+        usuario_executor
+    )
+    VALUES (
+        'Usuarios',
+        'UPDATE',
+        OLD.id_usuario,
+        JSON_OBJECT(
+            'nome', OLD.nome_usuario,
+            'email', OLD.email,
+            'telefone', OLD.numero_telefone,
+            'multa', OLD.multa_atual
+        ),
+        JSON_OBJECT(
+            'nome', NEW.nome_usuario,
+            'email', NEW.email,
+            'telefone', NEW.numero_telefone,
+            'multa', NEW.multa_atual
+        ),
+        USER()
+    );
+END$$
+DELIMITER;
+
+-- 2.3. Registrar cadastro de empréstimos (INSERT)
+DELIMITER $$
+CREATE TRIGGER log_insert_emprestimos
+AFTER INSERT ON Emprestimos
+FOR EACH ROW
+BEGIN
+    INSERT INTO logs_auditoria (
+        tabela_afetada,
+        operacao,
+        id_registro,
+        dados_antigos,
+        dados_novos,
+        usuario_executor
+    )
+    VALUES (
+        'Emprestimos',
+        'INSERT',
+        NEW.ID_emprestimo,
+        NULL,
+        JSON_OBJECT(
+            'usuario_id', NEW.Usuario_id,
+            'livro_id', NEW.Livro_id,
+            'data_emprestimo', NEW.Data_emprestimo,
+            'data_prevista', NEW.Data_devolucao_prevista,
+            'status', NEW.Status_emprestimo
+        ),
+        USER()
+    );
+END$$
+DELIMITER ;
+
+-- 2.4. Registrar atualização na tabela de empréstimo
 DELIMITER $$
 CREATE TRIGGER log_update_emprestimos
 AFTER UPDATE ON Emprestimos
@@ -200,9 +266,9 @@ BEGIN
 END$$
 DELIMITER;
 
--- 2.3. Registrar exclusão de livros
-DELIMITER $$
+-- 2.5. Registrar exclusão de livros
 
+DELIMITER $$
 CREATE TRIGGER log_delete_livros
 AFTER DELETE ON Livros
 FOR EACH ROW
