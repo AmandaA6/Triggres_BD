@@ -167,7 +167,7 @@ BEGIN
         USER()
     );
 END$$
-DELIMITER;  
+DELIMITER ;  
 
 -- 2.2. Registrar atualização de dados dos usuários (UPDATE)
 DELIMITER $$
@@ -202,7 +202,7 @@ BEGIN
         USER()
     );
 END$$
-DELIMITER;
+DELIMITER ;
 
 -- 2.3. Registrar cadastro de empréstimos (INSERT)
 DELIMITER $$
@@ -264,7 +264,7 @@ BEGIN
         USER()
     );
 END$$
-DELIMITER;
+DELIMITER ;
 
 -- 2.5. Registrar exclusão de livros
 
@@ -294,7 +294,7 @@ BEGIN
         USER()
     );
 END$$
-DELIMITER;
+DELIMITER ;
 
 -- 3. GATILHOS ATUALIZAÇÃO AUTOMÁTICA PÓS-EVENTO (INSERT/UPDATE/DELETE)
 
