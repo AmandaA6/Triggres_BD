@@ -40,7 +40,7 @@ CREATE TABLE Usuarios (
     nome_usuario VARCHAR(255) NOT NULL,
     email VARCHAR(255),
     numero_telefone VARCHAR(20),
-    data_inscricao DATE,
+    data_inscricao DATE NULL,
     multa_atual DECIMAL(10, 2),
     senha VARCHAR(255) NOT NULL
 );
@@ -386,15 +386,15 @@ DELIMITER ;
 
 -- 4. Geração Automática de Valores
 
--- 4.1. Preencher data de cadastro do usuário automaticamente
+-- 4.1. Gerar endereço padrão da editora
 DELIMITER $$
 
-CREATE TRIGGER data_cadastro_usuario
-BEFORE INSERT ON Usuarios
+CREATE TRIGGER endereco_padrao_editora
+BEFORE INSERT ON Editoras
 FOR EACH ROW
 BEGIN
-    IF NEW.data_inscricao IS NULL THEN
-        SET NEW.data_inscricao = CURDATE();
+    IF NEW.Endereco_editora IS NULL OR NEW.Endereco_editora = '' THEN
+        SET NEW.Endereco_editora = 'Endereço não informado.';
     END IF;
 END$$
 
@@ -414,7 +414,7 @@ END$$
 
 DELIMITER ;
 
--- 4.3. Preencher data do empréstimo automaticamente
+-- 4.3. Preencher data do empréstimo automaticamente 
 DELIMITER $$
 
 CREATE TRIGGER data_emprestimo
@@ -428,21 +428,22 @@ END$$
 
 DELIMITER ;
 
---  4.4. Gerar data de devolução prevista automaticamente
+--  4.4. Gerar biografia automática do autor 
 DELIMITER $$
 
-CREATE TRIGGER data_devolucao_prevista
-BEFORE INSERT ON Emprestimos
+CREATE TRIGGER biografia_autor
+BEFORE INSERT ON Autores
 FOR EACH ROW
 BEGIN
-    IF NEW.Data_devolucao_prevista IS NULL THEN
-        SET NEW.Data_devolucao_prevista = DATE_ADD(CURDATE(), INTERVAL 7 DAY);
+    IF NEW.Biografia IS NULL OR NEW.Biografia = '' THEN
+        SET NEW.Biografia = 'Biografia não informada no cadastro do autor.';
     END IF;
 END$$
 
 DELIMITER ;
 
--- 4.5. Gerar status automático do empréstimo
+
+-- 4.5. Gerar status automático do empréstimo 
 DELIMITER $$
 
 CREATE TRIGGER status_emprestimo
