@@ -17,6 +17,7 @@
                 <th>Gênero</th>
                 <th>Editora</th>
                 <th>Quantidade</th>
+                <th>Status</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -31,6 +32,13 @@
                 <td>{{ livro.nome_genero or '-' }}</td>
                 <td>{{ livro.Nome_editora or '-' }}</td>
                 <td>{{ livro.Quantidade_disponivel }}</td>
+                 <td>
+                    {% if livro.l_Status == 'Estoque baixo' %}
+                        <span style="color:red;font-weight:bold;">{{ livro.l_Status }}</span>
+                    {% else %}
+                        <span style="color:green;font-weight:bold;">{{ livro.l_Status or 'Disponível' }}</span>
+                    {% endif %}
+                </td>
                 <td>
                     <a href="{{ url_for('editar_livro', id=livro.ID_livro) }}" class="btn">Editar</a>
                     <a href="{{ url_for('excluir_livro', id=livro.ID_livro) }}" class="btn btn-danger" 
@@ -43,3 +51,4 @@
 </div>
 
 {% endblock %}
+
