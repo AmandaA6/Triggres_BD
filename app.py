@@ -624,11 +624,6 @@ def novo_emprestimo():
                 }
             )
             
-            conn.execute(
-                text("UPDATE Livros SET Quantidade_disponivel = Quantidade_disponivel - 1 WHERE ID_livro = :id"),
-                {"id": livro_id}
-            )
-            
         flash(f"Empréstimo realizado com sucesso! Data de devolução: {data_devolucao_prevista_str}.{mensagem_aviso}", 
               "warning" if mensagem_aviso else "success")
         return redirect(url_for("listar_emprestimos"))
@@ -678,11 +673,6 @@ def devolver_emprestimo(id):
                 }
             )
 
-            conn.execute(
-                text("UPDATE Livros SET Quantidade_disponivel = Quantidade_disponivel + 1 WHERE ID_livro = :id"),
-                {"id": emprestimo.Livro_id}
-            )
-            
         flash(f"Devolução realizada com sucesso! {mensagem_multa}", 
               "warning" if mensagem_multa else "success")
         return redirect(url_for("listar_emprestimos"))
@@ -827,4 +817,5 @@ def estatisticas():
         }
     
     return render_template('usuarios/estatisticas.html', estatisticas=estatisticas, historico=historico,
+
                          emprestimos_atrasados=emprestimos_atrasados, multa_atual=multa_atual)
