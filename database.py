@@ -57,6 +57,7 @@ with engine.connect() as conn:
             Editora_id INT,
             Quantidade_disponivel INT DEFAULT 0,
             Resumo TEXT,
+            l_Status VARCHAR(20) NOT NULL DEFAULT 'Disponível',
             FOREIGN KEY (Autor_id) REFERENCES Autores(ID_autor),
             FOREIGN KEY (Genero_id) REFERENCES generos(id_genero),
             FOREIGN KEY (Editora_id) REFERENCES Editoras(ID_editora)
@@ -78,4 +79,5 @@ with engine.connect() as conn:
     """))
 
     print("Tabelas criadas ou já existiam.")
+
 
