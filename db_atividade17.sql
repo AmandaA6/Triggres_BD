@@ -28,7 +28,7 @@ CREATE TABLE Livros (
     Ano_publicacao INT,
     Genero_id INT,
     Editora_id INT,
-    Quantidade_disponivel INT,
+    Quantidade_disponivel INT NULL,
     Resumo TEXT,
 	l_Status VARCHAR(20) NOT NULL DEFAULT 'Disponível',
     FOREIGN KEY (Autor_id) REFERENCES Autores(ID_autor),
@@ -427,21 +427,21 @@ DELIMITER ;
 
 -- 4. Geração Automática de Valores
 
--- 4.1. Gerar endereço padrão da editora
+-- 4.1. -- Gera quantidade inicial padrão do livro
 DELIMITER $$
 
-CREATE TRIGGER endereco_padrao_editora
-BEFORE INSERT ON Editoras
+CREATE TRIGGER quantidade_inicial_livro
+BEFORE INSERT ON Livros
 FOR EACH ROW
 BEGIN
-    IF NEW.Endereco_editora IS NULL OR NEW.Endereco_editora = '' THEN
-        SET NEW.Endereco_editora = 'Endereço não informado.';
+    IF NEW.Quantidade_disponivel IS NULL OR NEW.Quantidade_disponivel <= 0 THEN
+        SET NEW.Quantidade_disponivel = 1;
     END IF;
 END$$
 
 DELIMITER ;
 
--- 4.2. Definir multa inicial padrão (0.00)
+-- 4.2. Defini multa inicial padrão (0.00)
 DELIMITER $$
 
 CREATE TRIGGER multa_padrao
@@ -455,7 +455,7 @@ END$$
 
 DELIMITER ;
 
--- 4.3. Preencher data do empréstimo automaticamente 
+-- 4.3. Preenche data do empréstimo automaticamente 
 DELIMITER $$
 
 CREATE TRIGGER data_emprestimo
@@ -469,22 +469,19 @@ END$$
 
 DELIMITER ;
 
---  4.4. Gerar biografia automática do autor 
+--  4.4. Gera data de devolução prevista 
 DELIMITER $$
 
-CREATE TRIGGER biografia_autor
-BEFORE INSERT ON Autores
+CREATE TRIGGER data_devolucao_prevista
+BEFORE INSERT ON Emprestimos
 FOR EACH ROW
 BEGIN
-    IF NEW.Biografia IS NULL OR NEW.Biografia = '' THEN
-        SET NEW.Biografia = 'Biografia não informada no cadastro do autor.';
-    END IF;
+    SET NEW.Data_devolucao_prevista = DATE_ADD(NEW.Data_emprestimo, INTERVAL 20 DAY);
 END$$
 
 DELIMITER ;
 
-
--- 4.5. Gerar status automático do empréstimo 
+-- 4.5. Gera status automático do empréstimo 
 DELIMITER $$
 
 CREATE TRIGGER status_emprestimo
